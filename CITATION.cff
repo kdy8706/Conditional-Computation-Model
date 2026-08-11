@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the associated article."
+title: "Conditional Computation Model for Ocean Subsurface Reconstruction"
+type: software
+version: 0.1.0
+authors:
+  - family-names: Kim
+    given-names: Dong-Young
+    email: kdy8706@naver.com
+contact:
+  - family-names: Kim
+    given-names: Dong-Young
+    email: kdy8706@naver.com
+preferred-citation:
+  type: article
+  title: "A Wobbling Ratio for diagnosing phase evolution of the Ulleung Warm Eddy from its three-dimensional tilt structure"
+  authors:
+    - family-names: Kim
+      given-names: Dong-Young
+    - family-names: Kim
+      given-names: Eunju
+    - family-names: Jeong
+      given-names: Yoon-Seo
+    - family-names: Shin
+      given-names: Jisun
+    - family-names: Lu
+      given-names: Wenfang
+    - family-names: Jo
+      given-names: Young-Heon
+  journal: Frontiers in Marine Science
+  volume: 13
+  year: 2026
+  doi: 10.3389/fmars.2026.1860054

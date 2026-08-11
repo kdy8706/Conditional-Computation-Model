@@ -1,0 +1,30 @@
+profile: recovered_final_checkpoint_996
+purpose: evaluation_metadata
+
+artifact:
+  filename: model_epoch_996.pth
+  sha256: F9B88C9D30C74DCEC8D78896BC33F464CEDDBB2BDBEFB2F7CA88A17093F80350
+  state_dict_entries: 542
+
+data:
+  feature_layout: final_checkpoint_9spatial
+  training_profiles: 7893
+  held_out_profiles: 1973
+  independent_profiles_in_final_result: 8091
+  vector_grid_index: [0, 0]
+  missing_value: -999.0
+  missing_value_policy: preserve
+
+model:
+  spatial_shape: [9, 8, 8]
+  dense_features: 3
+  pressure_features: 13
+  output_shape: [13, 2]
+  dropout: 0.2
+  mask_mode: legacy
+  pool_mode: max
+
+training:
+  status: exact_script_not_recovered
+  selected_epoch: 996
+  loss_profile: unknown

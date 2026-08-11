@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ocean-ccm"
+version = "0.1.0"
+description = "Conditional computation for ocean subsurface temperature and salinity reconstruction"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Dong-Young Kim", email = "kdy8706@naver.com" },
+]
+maintainers = [
+  { name = "Dong-Young Kim", email = "kdy8706@naver.com" },
+]
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "torch>=2.1",
+  "torch-optimizer>=0.3.0",
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.6",
+]
+
+[project.urls]
+Paper = "https://doi.org/10.3389/fmars.2026.1860054"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
