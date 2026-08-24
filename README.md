@@ -6,19 +6,11 @@ Python research code for reconstructing 13-level subsurface temperature and sali
 
 ## Why conditional computation?
 
-Eddy observations are much less common than non-eddy observations. A single regressor can therefore be dominated by the majority regime. CCM retains all samples but routes each one to an independent expert using an upstream Okubo-Weiss (OW) label:
+![Conditional computation model architecture](docs/figures/codex-clipboard-32df9674-8335-4a86-819f-0491c5ecd83f.png)
 
-```mermaid
-flowchart LR
-    A["Surface observations"] --> B["OW < -0.2 sigma?"]
-    B -->|no| C["Non-eddy expert"]
-    B -->|yes| D["Eddy expert"]
-    C --> E["Sequential depth heads"]
-    D --> E
-    E --> F["Temperature and salinity at 13 depths"]
-```
+The imbalance concerns **in-situ subsurface temperature and salinity profiles classified as occurring inside eddy conditions**, not a generic category of “eddy observations.” The upstream Okubo-Weiss (OW) criterion labels a profile as eddy when `OW < -0.2 sigma`; profiles outside that condition form the non-eddy group. Because the eddy-labelled subset is smaller, a single regressor can be dominated by the non-eddy regime.
 
-Only one expert runs for each sample. The experts have the same architecture and do not share weights.
+CCM retains all samples but routes each sample to one independent expert. The eddy and non-eddy experts have the same architecture but do not share weights, and only the selected expert runs for a sample.
 
 ## Recovered input versions
 
@@ -44,7 +36,18 @@ Model-ready inputs are:
 
 The output is `(N, 13, 2)` for temperature and salinity at approximately 10, 20, 30, 50, 75, 100, 125, 150, 200, 250, 300, 400, and 500 m.
 
-Each expert combines a gated-convolution spatial encoder with a `3 -> 6 -> 12 -> 24` point encoder. Thirteen depth-specific heads predict the profile sequentially; each head after the first also receives the preceding temperature, salinity, and pressure.
+Each expert has two complementary feature-extraction paths:
+
+- A CNN encodes the spatial surface patch (SSH, wind, tide, bathymetry, and related gridded fields) to retain horizontal structure.
+- An MLP encodes the point variables. SST and SSS use the 0 m in-situ observations, together with day of year, to retain the local surface thermohaline state.
+
+The two feature sets are concatenated before depth-wise regression. Thirteen depth-specific heads then predict the profile sequentially. After the first depth, each head receives the preceding predicted temperature, salinity, and pressure through a residual conditioning path. This depth-to-depth connection was designed to help the model learn vertically transported thermohaline structure and keeps the architecture ready for an explicit mathematical formulation of the relation between depth (n) and (n + 1).
+
+### Physical motivation and related work
+
+The input selection and sequential residual structure were informed by the three-dimensional temperature and salinity transport problem: horizontal and vertical advection, mixing, and surface forcing jointly shape subsurface thermohaline fields. The [temperature-conservation note](docs/references/ocean_3D_temperature_conservation_equation.txt) records this physical motivation, including the vertical-advection and vertical-mixing terms. CCM is a data-driven reconstruction model, not a numerical solver of those conservation equations.
+
+The design was also informed by the studies kept in [docs/references](docs/references): Liu et al. (2024) on deep-learning reconstruction of 3-D eddy thermohaline structure; Yu et al. (2022) on including tidal information in subsurface thermal inversion; and Kim et al. (2023) on CNN-based subsurface-salinity estimation.
 
 ## Installation
 
