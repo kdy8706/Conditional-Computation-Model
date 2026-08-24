@@ -1,0 +1,227 @@
+Temperature Conservation Equation in the Ocean
+================================================
+
+1. Three-dimensional temperature conservation equation
+--------------------------------------------------------
+
+The temperature field T(x, y, z, t) in the ocean can be represented by the
+three-dimensional advection-diffusion equation:
+
+∂T/∂t
++ u ∂T/∂x
++ v ∂T/∂y
++ w ∂T/∂z
+=
+∇_h · (K_h ∇_h T)
++ ∂/∂z (K_T ∂T/∂z)
++ Q_T
+
+
+Equivalent compact form:
+
+∂T/∂t + u⃗ · ∇T
+=
+∇_h · (K_h ∇_h T)
++ ∂/∂z (K_T ∂T/∂z)
++ Q_T
+
+
+2. Meaning of each term
+-----------------------
+
+[Local temporal change]
+
+∂T/∂t
+
+- Temporal change of temperature at a fixed location.
+
+
+[Horizontal advection]
+
+u ∂T/∂x + v ∂T/∂y
+
+- Transport of temperature by horizontal ocean currents.
+- u: zonal (east-west) velocity
+- v: meridional (north-south) velocity
+
+
+[Vertical advection]
+
+w ∂T/∂z
+
+- Vertical transport of temperature by vertical velocity.
+- w > 0 generally represents upward motion when z is defined positive upward.
+- This term is directly related to processes such as upwelling, downwelling,
+  mesoscale/submesoscale vertical motions, and overturning circulation.
+
+
+[Horizontal diffusion/mixing]
+
+∇_h · (K_h ∇_h T)
+
+- Horizontal redistribution of temperature by unresolved turbulent mixing.
+- K_h: horizontal diffusivity [m² s⁻¹]
+
+
+[Vertical diffusion/mixing]
+
+∂/∂z (K_T ∂T/∂z)
+
+- Vertical redistribution of temperature by turbulent or molecular diffusion.
+- K_T: vertical thermal diffusivity [m² s⁻¹]
+- This term is especially important in the surface mixed layer, thermocline,
+  and regions of strong turbulent mixing.
+
+
+[Source/sink term]
+
+Q_T
+
+- Represents heating or cooling processes not explicitly included in the
+  advection-diffusion terms.
+- Depending on formulation, it may include surface heat flux, shortwave
+  radiation penetration, internal heating, or parameterized source/sink terms.
+
+
+3. Terms directly associated with vertical temperature transport
+-----------------------------------------------------------------
+
+The two principal terms controlling vertical temperature redistribution are:
+
+(1) Vertical advection
+
+w ∂T/∂z
+
+
+(2) Vertical diffusion / turbulent mixing
+
+∂/∂z (K_T ∂T/∂z)
+
+
+Therefore, a simplified one-dimensional vertical temperature equation can be
+written as:
+
+∂T/∂t
++ w ∂T/∂z
+=
+∂/∂z (K_T ∂T/∂z)
++ Q_T
+
+
+4. Vertical heat flux formulation
+---------------------------------
+
+Temperature transport can also be expressed as a vertical heat flux.
+
+Total vertical heat flux:
+
+F_H = ρ₀ c_p wT - ρ₀ c_p K_T ∂T/∂z
+
+
+where
+
+ρ₀ : reference seawater density [kg m⁻³]
+c_p : specific heat capacity of seawater [J kg⁻¹ K⁻¹]
+w   : vertical velocity [m s⁻¹]
+T   : temperature
+K_T : vertical thermal diffusivity [m² s⁻¹]
+
+
+The flux can be separated into:
+
+Advective heat flux:
+
+F_H,adv = ρ₀ c_p wT
+
+
+Diffusive/turbulent heat flux:
+
+F_H,diff = -ρ₀ c_p K_T ∂T/∂z
+
+
+The negative sign indicates downgradient transport: turbulent diffusion tends
+to transport heat from warmer regions toward colder regions.
+
+
+5. Reynolds-averaged turbulent heat transport
+---------------------------------------------
+
+If temperature and vertical velocity are decomposed into mean and fluctuating
+components,
+
+T = T̄ + T'
+w = w̄ + w'
+
+then turbulent vertical temperature transport is represented by
+
+w'T' averaged in time or ensemble:
+
+overline(w'T')
+
+
+Under a downgradient diffusion closure,
+
+overline(w'T') = -K_T ∂T̄/∂z
+
+
+and the corresponding turbulent vertical heat flux is
+
+F_H,turb = ρ₀ c_p overline(w'T')
+         = -ρ₀ c_p K_T ∂T̄/∂z
+
+
+6. Physical interpretation
+--------------------------
+
+The vertical redistribution of ocean temperature is primarily controlled by
+two distinct mechanisms:
+
+1) Vertical advection:
+   Heat is carried vertically by organized fluid motion through w.
+
+2) Vertical turbulent mixing:
+   Heat is redistributed across the vertical temperature gradient through K_T.
+
+Thus, when examining how surface thermal signals are transmitted into the
+subsurface ocean, the key quantities are:
+
+- vertical velocity w
+- vertical temperature gradient ∂T/∂z
+- vertical diffusivity K_T
+- turbulent heat flux overline(w'T')
+
+
+7. Key equation for subsurface-temperature studies
+--------------------------------------------------
+
+For studies focused on surface-to-subsurface temperature transfer, a useful
+form is:
+
+∂T/∂t
+=
+- u ∂T/∂x
+- v ∂T/∂y
+- w ∂T/∂z
++ ∇_h · (K_h ∇_h T)
++ ∂/∂z (K_T ∂T/∂z)
++ Q_T
+
+
+This form separates the processes responsible for temporal temperature change:
+
+- horizontal advection
+- vertical advection
+- horizontal mixing
+- vertical mixing
+- external/internal heating or cooling
+
+In particular, the terms
+
+-w ∂T/∂z
+
+and
+
+∂/∂z (K_T ∂T/∂z)
+
+describe the principal dynamical and mixing mechanisms that transfer
+temperature vertically within the ocean.
