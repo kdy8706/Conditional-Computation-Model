@@ -17,34 +17,44 @@ The objective is not merely to interpolate a subsurface profile. It is to infer
 how temperature and salinity vary from 10 to 500 m under dynamically different
 surface conditions, including mesoscale eddies. A profile is assigned to the
 eddy regime when its upstream Okubo-Weiss (OW) criterion satisfies
-`OW < -0.2 sigma`; this is the operational meaning of an "eddy profile" in
-this project, rather than a vague label of "eddy observations."
+`OW < -0.2 sigma`.
 
-The eddy regime is underrepresented relative to the non-eddy regime in the
-training collection. This is an imbalance between **routing regimes**, not a
-claim that the continuous temperature or salinity targets are class labels.
-Learning from underrepresented groups can cause conventional learners to favor
-the majority group; this general issue is reviewed by
-[He and Garcia (2009)](https://doi.org/10.1109/TKDE.2008.239). The inspected
-data counts and their remaining reconciliation notes are recorded in the
+The available in-situ profiles have a **sampling imbalance** between profiles
+collected within and outside eddies. In the reviewed study dataset, 3,141
+profiles corresponded to eddies out of 13,335 total profiles. This limited
+eddy sampling can bias a conventional model toward the more common non-eddy
+conditions. The broader methodological issue of learning from underrepresented
+data is reviewed by [He and Garcia (2009)](https://doi.org/10.1109/TKDE.2008.239);
+the project-specific counts and reconciliation notes are in the
 [data card](docs/DATA_CARD.md).
 
 ### Why use CCM rather than one regressor?
 
 A single regressor trained on all profiles can be dominated by the more common
-non-eddy regime. CCM keeps all samples, but its decision module sends each
-sample to either an eddy or non-eddy expert. The experts have the same
-architecture and separate weights; only the selected expert runs for that
-sample. This gives the less frequent eddy regime its own prediction pathway
-while retaining a shared, reproducible data interface.
+non-eddy conditions. To mitigate this sampling imbalance without discarding
+the available observations, CCM uses the full dataset while allowing the eddy
+and non-eddy modules to be treated separately. Its decision module routes a
+sample to the corresponding eddy or non-eddy module; the two modules have the
+same architecture and separate weights.
+
+![CCM and non-CCM performance comparison](docs/figures/ccm_vs_nonccm_major1.png)
+
+*Figure. Performance comparison used in the Major 1 reviewer response. Red
+circles are CCM and blue squares are non-CCM; solid and dashed lines indicate
+the independent test and test datasets, respectively. Panels show
+depth-dependent temperature and salinity RMSE and NRMSE. The comparison is the
+ablation evidence for using separate eddy and non-eddy modules; model selection
+prioritized robust performance and a small difference between test and
+independent-test errors.*
 
 The architecture is an ocean-reconstruction application of input-dependent
 conditional computation: a gating decision selects the computation used for a
 given input. [Bengio, Leonard, and Courville (2013)](https://arxiv.org/abs/1308.3432)
 and [Bengio et al. (2016)](https://arxiv.org/abs/1511.06297) provide the
 methodological background for conditional, input-dependent activation. They do
-not by themselves establish the ocean-specific imbalance; that motivation comes
-from the documented composition of this project's data.
+not by themselves establish the ocean-specific sampling imbalance; that
+motivation comes from the documented composition of this project's in-situ
+profiles.
 
 ### How CCM represents the ocean problem
 
@@ -58,10 +68,17 @@ Each expert combines two complementary feature paths:
 The two feature representations are combined before depth-wise regression.
 Thirteen depth heads predict temperature and salinity sequentially. After the
 first level, each head receives the preceding predicted temperature, salinity,
-and pressure through residual conditioning. This lets the model carry
-information from the preceding water layer while learning vertical
-thermohaline-transport structure, and it keeps a clear location for a future
-equation relating depth `n` to `n + 1`.
+and pressure through residual conditioning. In the current CCM, this residual
+connection carries the previous-depth information but does not itself solve a
+physical equation.
+
+The residual structure was intentionally designed as an extension point for a
+future equation-informed layer relating depth `n` to `n + 1`. This would allow
+a hybrid numerical-model and deep-learning model to be developed while keeping
+the present data-driven CCM as the baseline. Physics-informed machine learning
+provides a broader framework for combining mathematical models and data-driven
+networks [Karniadakis et al. (2021)](https://doi.org/10.1038/s42254-021-00314-5);
+no such hybrid layer is implemented in this release.
 
 ### Scientific background and design references
 
@@ -71,10 +88,11 @@ they are not all claims that CCM reproduces the cited methods exactly.
 | Reference | Contribution to this repository's design |
 |---|---|
 | [Kim et al. (2026)](docs/references/Kim%20et%20al.%2C%202026.pdf) | East Sea eddy context and the scientific need to represent three-dimensional thermohaline structure. |
-| [Ocean 3-D temperature conservation note](docs/references/ocean_3D_temperature_conservation_equation.txt) | Physical motivation from advection, mixing, and surface forcing; especially the vertical transport terms that motivated sequential residual depth heads. CCM is not a numerical conservation-equation solver. |
+| [Ocean 3-D temperature conservation note](docs/references/ocean_3D_temperature_conservation_equation.txt) | Physical motivation from advection, mixing, surface forcing, and vertical transport. It defines the future equation-informed direction; CCM is not a numerical conservation-equation solver. |
 | [Liu et al. (2024)](docs/references/liu%20et%20al.%2C%202024%20%2B%20tilting.pdf) | Satellite-observation and deep-learning reconstruction of three-dimensional eddy thermohaline structure. |
 | [Yu et al. (2022)](docs/references/yu%20et%20al.%2C%202022%20%2B%20tide.pdf) | Motivation for retaining tidal information among the surface inputs for subsurface thermal inversion. |
 | [Kim et al. (2023)](docs/references/README.md#referenced-but-not-stored) | CNN-based subsurface-salinity estimation, supporting the use of a spatial CNN pathway for thermohaline reconstruction. |
+| [Karniadakis et al. (2021)](https://doi.org/10.1038/s42254-021-00314-5) | General framework for the planned, but not yet implemented, physics-informed hybrid extension. |
 | [Complete reference notes](docs/references/README.md) | Full citation list, including the methodological conditional-computation and imbalance references. |
 
 
@@ -294,6 +312,4 @@ The Release includes the author-authorized archive and weights. No software
 license has yet been selected, so publication does not by itself grant a broad
 reuse or redistribution license. Add an explicit license before representing
 the repository as openly reusable.
-
-
 
