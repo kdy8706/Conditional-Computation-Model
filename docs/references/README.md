@@ -11,6 +11,7 @@ reimplements every cited method.
 |---|---|
 | [Kim et al. (2026)](Kim%20et%20al.%2C%202026.pdf), *A Wobbling Ratio for diagnosing phase evolution of the Ulleung Warm Eddy from its three-dimensional tilt structure* | East Sea eddy context and the scientific need to resolve three-dimensional thermohaline structure. |
 | [ocean_3D_temperature_conservation_equation.txt](ocean_3D_temperature_conservation_equation.txt) | Design note on the three-dimensional temperature-conservation equation, including advection, mixing, surface forcing, and vertical heat transport. It motivates the sequential residual depth connection; CCM is not a numerical solver of this equation. |
+| [Karniadakis et al. (2021)](https://doi.org/10.1038/s42254-021-00314-5), *Physics-informed machine learning* | General framework for the planned, but not yet implemented, equation-informed hybrid numerical-model and deep-learning extension. |
 
 ## Ocean reconstruction and input-design references
 
@@ -24,7 +25,7 @@ reimplements every cited method.
 
 | Reference | Role in CCM |
 |---|---|
-| [He and Garcia (2009)](https://doi.org/10.1109/TKDE.2008.239), *Learning from Imbalanced Data* | General methodological basis for stating that underrepresented routing regimes require explicit attention. It does not identify the ocean-specific imbalance; that evidence is documented in the project data card. |
+| [He and Garcia (2009)](https://doi.org/10.1109/TKDE.2008.239), *Learning from Imbalanced Data* | General methodological basis for describing how underrepresented data can bias learning. It does not identify the ocean-specific sampling imbalance; that evidence is documented in the project data card. |
 | [Bengio, Leonard, and Courville (2013)](https://arxiv.org/abs/1308.3432), *Estimating or Propagating Gradients Through Stochastic Neurons for Conditional Computation* | Conceptual background for conditional computation and gated, input-dependent activation. |
 | [Bengio et al. (2016)](https://arxiv.org/abs/1511.06297), *Conditional Computation in Neural Networks for Faster Models* | Further methodological background for selecting computation according to the input. |
 
@@ -39,5 +40,4 @@ repository.
 
 Keep each source's original license and publisher terms in mind before
 redistributing this repository or its reference files.
-
 
