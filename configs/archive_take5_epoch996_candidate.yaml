@@ -30,9 +30,10 @@ training:
 
 archive:
   candidate_checkpoint: 13/model_epoch_996.pth
-  source_archive: last_result(1).zip
+  source_archive: last_result.1.zip (GitHub Release v0.1.0)
   source_layout: take5_10spatial
   archived_attempts: 20
   archived_checkpoint_count: 500
   archived_checkpoint_interval_epochs: 2
-  status: verified local archive asset pending publication
+  status: published GitHub Release v0.1.0 asset; full archive
+
