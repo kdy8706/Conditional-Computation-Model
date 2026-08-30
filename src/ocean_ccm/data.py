@@ -275,7 +275,14 @@ class NormalizationStats:
 
 
 def load_mat_dataset(paths: str | Path | Iterable[str | Path]) -> RawDataset:
-    """Load and concatenate one or more processed MATLAB profile datasets."""
+    """Load standard or archived MATLAB profile datasets.
+
+    Standard files expose ``Dinput2``, ``Doutput2``, and ``Dpressure2``.
+    The released archive stores an already-created split with either
+    ``xtrain``/``ytrain``/``pressure_train`` or
+    ``xtest``/``ytest``/``pressure_test``.  Supporting both layouts keeps the
+    archive executable without altering its historical arrays.
+    """
 
     if isinstance(paths, (str, Path)):
         paths = [paths]
@@ -283,10 +290,33 @@ def load_mat_dataset(paths: str | Path | Iterable[str | Path]) -> RawDataset:
     loaded: list[RawDataset] = []
     for path in paths:
         values = loadmat(path)
+        if {"Dinput2", "Doutput2", "Dpressure2"}.issubset(values):
+            inputs, targets, pressure = (
+                values["Dinput2"],
+                values["Doutput2"],
+                values["Dpressure2"],
+            )
+        elif {"xtrain", "ytrain", "pressure_train"}.issubset(values):
+            inputs, targets, pressure = (
+                values["xtrain"],
+                values["ytrain"],
+                values["pressure_train"],
+            )
+        elif {"xtest", "ytest", "pressure_test"}.issubset(values):
+            inputs, targets, pressure = (
+                values["xtest"],
+                values["ytest"],
+                values["pressure_test"],
+            )
+        else:
+            raise ValueError(
+                f"{path} must contain Dinput2/Doutput2/Dpressure2, "
+                "xtrain/ytrain/pressure_train, or xtest/ytest/pressure_test"
+            )
         dataset = RawDataset(
-            inputs=np.asarray(values["Dinput2"]),
-            targets=np.asarray(values["Doutput2"]),
-            pressure=np.asarray(values["Dpressure2"]),
+            inputs=np.asarray(inputs),
+            targets=np.asarray(targets),
+            pressure=np.asarray(pressure),
         )
         dataset.validate()
         loaded.append(dataset)
@@ -319,3 +349,4 @@ def split_indices(
     shuffled = generator.permutation(sample_count)
     train_count = int(np.floor(sample_count * train_fraction))
     return shuffled[:train_count], shuffled[train_count:]
+
