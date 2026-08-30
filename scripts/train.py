@@ -95,30 +95,43 @@ def main() -> None:
 
     data_configuration = configuration["data"]
     layout = get_feature_layout(data_configuration["feature_layout"])
-    paths = [Path(data_configuration["primary_mat"])]
-    supplement = data_configuration.get("supplement_mat")
-    if supplement:
-        paths.append(Path(supplement))
-    raw = load_mat_dataset(paths)
+    archived_train = data_configuration.get("train_mat")
+    archived_validation = data_configuration.get("validation_mat")
+    if bool(archived_train) != bool(archived_validation):
+        raise ValueError("data.train_mat and data.validation_mat must be supplied together")
 
-    train_indices, validation_indices = split_indices(
-        raw.size,
-        train_fraction=float(data_configuration["train_fraction"]),
-        seed=seed,
-    )
-    stats = NormalizationStats.fit(raw, train_indices, layout=layout)
+    if archived_train:
+        raw_train = load_mat_dataset(Path(archived_train))
+        raw_validation = load_mat_dataset(Path(archived_validation))
+        train_indices = np.arange(raw_train.size)
+        validation_indices = np.arange(raw_validation.size)
+    else:
+        paths = [Path(data_configuration["primary_mat"])]
+        supplement = data_configuration.get("supplement_mat")
+        if supplement:
+            paths.append(Path(supplement))
+        raw = load_mat_dataset(paths)
+        train_indices, validation_indices = split_indices(
+            raw.size,
+            train_fraction=float(data_configuration["train_fraction"]),
+            seed=seed,
+        )
+        raw_train = raw
+        raw_validation = raw
+
+    stats = NormalizationStats.fit(raw_train, train_indices, layout=layout)
     vector_index = tuple(data_configuration.get("vector_grid_index", [3, 3]))
     missing_value = float(data_configuration.get("missing_value", -999.0))
     missing_value_policy = data_configuration.get("missing_value_policy", "sentinel")
     train_data = stats.transform(
-        raw,
+        raw_train,
         train_indices,
         vector_grid_index=vector_index,
         missing_value=missing_value,
         missing_value_policy=missing_value_policy,
     )
     validation_data = stats.transform(
-        raw,
+        raw_validation,
         validation_indices,
         vector_grid_index=vector_index,
         missing_value=missing_value,
@@ -221,3 +234,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
