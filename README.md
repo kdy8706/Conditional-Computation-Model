@@ -6,6 +6,78 @@ observations. It accompanies Kim et al. (2026), *A Wobbling Ratio for
 diagnosing phase evolution of the Ulleung Warm Eddy from its three-dimensional
 tilt structure*.
 
+
+## Why Conditional Computation?
+
+![Conditional computation model architecture](docs/figures/codex-clipboard-32df9674-8335-4a86-819f-0491c5ecd83f.png)
+
+### The scientific and learning problem
+
+The objective is not merely to interpolate a subsurface profile. It is to infer
+how temperature and salinity vary from 10 to 500 m under dynamically different
+surface conditions, including mesoscale eddies. A profile is assigned to the
+eddy regime when its upstream Okubo-Weiss (OW) criterion satisfies
+`OW < -0.2 sigma`; this is the operational meaning of an "eddy profile" in
+this project, rather than a vague label of "eddy observations."
+
+The eddy regime is underrepresented relative to the non-eddy regime in the
+training collection. This is an imbalance between **routing regimes**, not a
+claim that the continuous temperature or salinity targets are class labels.
+Learning from underrepresented groups can cause conventional learners to favor
+the majority group; this general issue is reviewed by
+[He and Garcia (2009)](https://doi.org/10.1109/TKDE.2008.239). The inspected
+data counts and their remaining reconciliation notes are recorded in the
+[data card](docs/DATA_CARD.md).
+
+### Why use CCM rather than one regressor?
+
+A single regressor trained on all profiles can be dominated by the more common
+non-eddy regime. CCM keeps all samples, but its decision module sends each
+sample to either an eddy or non-eddy expert. The experts have the same
+architecture and separate weights; only the selected expert runs for that
+sample. This gives the less frequent eddy regime its own prediction pathway
+while retaining a shared, reproducible data interface.
+
+The architecture is an ocean-reconstruction application of input-dependent
+conditional computation: a gating decision selects the computation used for a
+given input. [Bengio, Leonard, and Courville (2013)](https://arxiv.org/abs/1308.3432)
+and [Bengio et al. (2016)](https://arxiv.org/abs/1511.06297) provide the
+methodological background for conditional, input-dependent activation. They do
+not by themselves establish the ocean-specific imbalance; that motivation comes
+from the documented composition of this project's data.
+
+### How CCM represents the ocean problem
+
+Each expert combines two complementary feature paths:
+
+- A CNN extracts horizontal structure from the surface patch: sea-surface
+  height, wind, tide, bathymetry, net heat flux, and related gridded fields.
+- An MLP encodes the point variables: 0 m in-situ SST and SSS, together with
+  day of year. These surface observations retain the local thermohaline state.
+
+The two feature representations are combined before depth-wise regression.
+Thirteen depth heads predict temperature and salinity sequentially. After the
+first level, each head receives the preceding predicted temperature, salinity,
+and pressure through residual conditioning. This lets the model carry
+information from the preceding water layer while learning vertical
+thermohaline-transport structure, and it keeps a clear location for a future
+equation relating depth `n` to `n + 1`.
+
+### Scientific background and design references
+
+The following references describe why these inputs and connections were chosen;
+they are not all claims that CCM reproduces the cited methods exactly.
+
+| Reference | Contribution to this repository's design |
+|---|---|
+| [Kim et al. (2026)](docs/references/Kim%20et%20al.%2C%202026.pdf) | East Sea eddy context and the scientific need to represent three-dimensional thermohaline structure. |
+| [Ocean 3-D temperature conservation note](docs/references/ocean_3D_temperature_conservation_equation.txt) | Physical motivation from advection, mixing, and surface forcing; especially the vertical transport terms that motivated sequential residual depth heads. CCM is not a numerical conservation-equation solver. |
+| [Liu et al. (2024)](docs/references/liu%20et%20al.%2C%202024%20%2B%20tilting.pdf) | Satellite-observation and deep-learning reconstruction of three-dimensional eddy thermohaline structure. |
+| [Yu et al. (2022)](docs/references/yu%20et%20al.%2C%202022%20%2B%20tide.pdf) | Motivation for retaining tidal information among the surface inputs for subsurface thermal inversion. |
+| [Kim et al. (2023)](docs/references/README.md#referenced-but-not-stored) | CNN-based subsurface-salinity estimation, supporting the use of a spatial CNN pathway for thermohaline reconstruction. |
+| [Complete reference notes](docs/references/README.md) | Full citation list, including the methodological conditional-computation and imbalance references. |
+
+
 > **Start here:** this workflow is written for a first-time user. It uses the
 > published `v0.1.0` Release and the current `main` branch, without
 > undocumented local paths. The Release is access-controlled while this
@@ -159,18 +231,7 @@ configured attempt. To repeat a 20-attempt sweep, run this command in separate
 output directories with explicitly recorded seeds and compare held-out metrics
 before selecting a checkpoint.
 
-## Why conditional computation?
-
-![Conditional computation model architecture](docs/figures/codex-clipboard-32df9674-8335-4a86-819f-0491c5ecd83f.png)
-
-The eddy group means profiles whose upstream Okubo-Weiss (OW) criterion
-satisfies `OW < -0.2 sigma`; it does not merely mean a vague collection of
-"eddy observations." This group is smaller than the non-eddy group. CCM keeps
-all samples, then sends each one to the eddy or non-eddy expert selected by the
-binary routing signal. The two experts have the same architecture, separate
-weights, and only the chosen expert runs for a sample.
-
-## Data format and model architecture
+## Data interface and compatibility
 
 The released workflow uses `take5_10spatial`:
 
@@ -233,4 +294,6 @@ The Release includes the author-authorized archive and weights. No software
 license has yet been selected, so publication does not by itself grant a broad
 reuse or redistribution license. Add an explicit license before representing
 the repository as openly reusable.
+
+
 
