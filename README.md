@@ -61,6 +61,14 @@ python -m pip install -e ".[dev]"
 
 No MATLAB installation is required for the cleaned model, training, evaluation, or deterministic post-matching preprocessing modules.
 
+## Reproducing the workflow
+
+The codebase exposes a reproducible training and evaluation path: model-ready MATLAB inputs are loaded from configured local paths, the training split and hyperparameters are declared in YAML, and the refactored trainer saves both the best validation-loss checkpoint and the final checkpoint.
+
+Start from [the reproduction guide](docs/REPRODUCIBILITY.md) and [the archive candidate configuration](configs/archive_take5_epoch996_candidate.yaml). The guide explains how to connect authorized training and independent-validation datasets, adjust the number of epochs, batch size, learning rate, seed, and other settings, then evaluate depth-resolved temperature and salinity metrics.
+
+The supplied local archive contains 500 intermediate checkpoints and is approximately 1.14 GB compressed. It is intentionally **not** committed as a repository ZIP. Its user-designated `model_epoch_996.pth` candidate belongs to the take5 10-spatial-channel layout, not the separate 9-spatial epoch-996 artifact documented above. [Model selection policy](docs/MODEL_SELECTION.md) defines the record required before publishing a single selected release package.
+
 ## Recovered checkpoint evaluation
 
 Keep authorized local copies outside Git, then convert the legacy normalization files:
