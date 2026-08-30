@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.io import savemat
 
 from ocean_ccm.data import (
     FINAL_CHECKPOINT_LAYOUT,
@@ -6,6 +7,7 @@ from ocean_ccm.data import (
     NormalizationStats,
     RawDataset,
     split_indices,
+    load_mat_dataset,
 )
 
 
@@ -72,3 +74,20 @@ def test_target_round_trip():
     processed = stats.transform(raw)
     restored = stats.inverse_targets(processed.targets)
     assert np.allclose(restored, raw.targets, atol=1e-5)
+
+
+def test_archive_train_and_test_split_layouts_are_loaded(tmp_path):
+    raw = synthetic_raw(sample_count=4)
+    train_path = tmp_path / "trainset.mat"
+    test_path = tmp_path / "testset.mat"
+    savemat(
+        train_path,
+        {"xtrain": raw.inputs, "ytrain": raw.targets, "pressure_train": raw.pressure},
+    )
+    savemat(
+        test_path,
+        {"xtest": raw.inputs, "ytest": raw.targets, "pressure_test": raw.pressure},
+    )
+    assert load_mat_dataset(train_path).inputs.shape == raw.inputs.shape
+    assert load_mat_dataset(test_path).targets.shape == raw.targets.shape
+
