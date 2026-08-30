@@ -1,0 +1,29 @@
+profile: release_archive_take5
+purpose: retrain one model from the archived train/test split released in v0.1.0
+seed: 20250217
+
+data:
+  feature_layout: take5_10spatial
+  train_mat: path/to/extracted/13/trainset.mat
+  validation_mat: path/to/extracted/13/testset.mat
+  vector_grid_index: [0, 0]
+  missing_value: -999.0
+  missing_value_policy: sentinel
+
+model:
+  num_depths: 13
+  dropout: 0.2
+  mask_mode: legacy
+  pool_mode: avg
+
+training:
+  epochs: 1000
+  batch_size: 5000
+  learning_rate: 0.0005
+  loss_profile: paper_focal
+  non_eddy_gamma: 1.5
+  eddy_gamma: 2.0
+  checkpoint_policy: best_and_last
+  monitor: validation_total_loss
+  output_dir: runs/release_archive_take5
+
