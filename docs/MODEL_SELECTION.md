@@ -4,8 +4,8 @@
 
 The published `v0.1.0` Release asset `last_result.1.zip` is the GitHub
 filename for the local `last_result(1).zip`. It contains one archived take5
-attempt: 500 checkpoints from `model_epoch_10.pth` through
-`model_epoch_998.pth`, legacy `cnn.py`, matching normalization files,
+attempt: 500 checkpoints from `model_epoch_2.pth` through
+`model_epoch_1000.pth`, legacy `cnn.py`, matching normalization files,
 train/test splits, and `model_result.mat`. It is a Release asset rather than a
 Git-tracked file.
 
@@ -21,7 +21,8 @@ includes net heat flux. Its SHA-256 is:
 ```
 
 It is distinct from the historical `final_checkpoint_9spatial` epoch-996
-artifact.
+artifact and is released as a runnable take5 archive candidate, not as a
+claim that it is the exact final-paper model.
 
 ## Release record and remaining selection requirements
 

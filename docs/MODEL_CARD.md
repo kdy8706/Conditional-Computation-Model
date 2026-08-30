@@ -64,7 +64,7 @@ Each depth has a separate `128 -> 32 -> 8 -> 2` regression head. Predictions the
 
 ## Training
 
-The recovered epoch-996 evaluator uses max pooling, point variables at `[0, 0]`, and preserves input NaNs so invalid predictions are excluded by the original metric calculation. The later take5 code uses average pooling, maps missing values to `-999`, combines 13,335 profiles, and uses batch size 5,000, 1,500 epochs, dropout 0.2, and learning rate 0.0005. Separate RAdam optimizers update the two experts.
+The recovered historical epoch-996 evaluator uses max pooling, point variables at `[0, 0]`, and preserves input NaNs so invalid predictions are excluded by the original metric calculation. The public take5 workflow uses average pooling, maps missing values to `-999`, and takes vector inputs at `[3, 3]` (the one-based central `(4, 4)` point). It is an archive-compatible implementation rather than a claim that the two lineages are identical.
 
 The later take5 loss assignment matches the paper (focal-Huber gamma 1.5 and 2.0), but its 10-channel input does not match the epoch-996 checkpoint. See [Paper alignment](PAPER_ALIGNMENT.md).
 

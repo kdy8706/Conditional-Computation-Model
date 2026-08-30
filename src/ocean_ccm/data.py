@@ -190,7 +190,7 @@ class NormalizationStats:
         indices: Sequence[int] | None = None,
         *,
         layout: FeatureLayout | None = None,
-        vector_grid_index: tuple[int, int] = (0, 0),
+        vector_grid_index: tuple[int, int] = (3, 3),
         missing_value: float = -999.0,
         missing_value_policy: MissingValuePolicy = "sentinel",
     ) -> ProcessedDataset:

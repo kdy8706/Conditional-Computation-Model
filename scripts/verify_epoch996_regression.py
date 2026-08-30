@@ -75,7 +75,7 @@ def main() -> None:
         raise ValueError("Epoch-996 regression requires final_checkpoint_9spatial statistics")
     processed = stats.transform(
         raw,
-        vector_grid_index=(0, 0),
+        vector_grid_index=(3, 3),
         missing_value_policy="preserve",
     )
     prediction = stats.inverse_targets(

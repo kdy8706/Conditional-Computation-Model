@@ -32,7 +32,7 @@ def parse_arguments() -> argparse.Namespace:
         type=int,
         nargs=2,
         metavar=("ROW", "COLUMN"),
-        default=(0, 0),
+        default=(3, 3),
     )
     parser.add_argument(
         "--missing-value-policy",

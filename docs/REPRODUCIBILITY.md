@@ -5,7 +5,8 @@
 Follow the [README](../README.md) from **Install** through **Retrain the
 released archived split** without substituting local data paths or changing a
 model option. That is the supported first-time-user route. It has been checked
-with the two v0.1.0 Release assets and uses only these paths after extraction:
+with the `v0.1.1` source, the v0.1.1 small execution asset, and the v0.1.0
+full archive asset; it uses only these paths after extraction:
 
 ```text
 artifacts/release/execution/model_epoch_996.pth
@@ -43,11 +44,12 @@ compare held-out and independent results under a predeclared selection rule.
 An independent MATLAB file must contain `Dinput2`, `Doutput2`, and
 `Dpressure2`, with shapes `(8, 8, 14, N)`, `(N, 13, 2)`, and `(14, N)`.
 Use the README evaluation command but replace `--data` only. Keep
-`take5_10spatial`, average pooling, `[0, 0]`, and `sentinel` for the released
+`take5_10spatial`, average pooling, `[3, 3]` (the one-based central `(4, 4)`
+point), and `sentinel` for the released
 checkpoint. Record the dataset owner, preprocessing version, and whether the
 file is truly independent before reporting the result.
 
 The historical nine-spatial-channel artifacts are a different compatibility
-path. They must not be mixed with the v0.1.0 take5 checkpoint or its released
+path. They must not be mixed with the v0.1.1 take5 checkpoint or its released
 normalization files.
 

@@ -7,7 +7,7 @@ data:
   primary_mat: data/raw/dataset3.mat
   supplement_mat: data/raw/dataset_ARGO(1).mat
   train_fraction: 0.8
-  vector_grid_index: [0, 0]
+  vector_grid_index: [3, 3]
   missing_value: -999.0
   missing_value_policy: sentinel
 

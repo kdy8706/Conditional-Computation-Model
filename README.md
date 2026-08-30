@@ -6,6 +6,15 @@ observations. It accompanies Kim et al. (2026), *A Wobbling Ratio for
 diagnosing phase evolution of the Ulleung Warm Eddy from its three-dimensional
 tilt structure*.
 
+> **Scope and paper relationship:** this public repository is a runnable,
+> archive-compatible implementation for researchers to inspect, evaluate, and
+> retrain the released workflow. Its `take5_10spatial` checkpoint is not
+> claimed to be the exact final production artifact used for every result in
+> Kim et al. (2026). In particular, the repository preserves both a released
+> 10-spatial-channel take5 archive and a separate historical 9-spatial-channel
+> paper-result lineage. See [evidence status](docs/EVIDENCE_STATUS.md) before
+> comparing this Release directly with figures in the article.
+
 
 ## Why Conditional Computation?
 
@@ -20,32 +29,35 @@ eddy regime when its upstream Okubo-Weiss (OW) criterion satisfies
 `OW < -0.2 sigma`.
 
 The available in-situ profiles have a **sampling imbalance** between profiles
-collected within and outside eddies. In the reviewed study dataset, 3,141
-profiles corresponded to eddies out of 13,335 total profiles. This limited
-eddy sampling can bias a conventional model toward the more common non-eddy
-conditions. The broader methodological issue of learning from underrepresented
-data is reviewed by [He and Garcia (2009)](https://doi.org/10.1109/TKDE.2008.239);
-the project-specific counts and reconciliation notes are in the
-[data card](docs/DATA_CARD.md).
+collected within and outside eddies. Kim et al. (2026) and the reviewer-response
+analysis report 3,141 eddy profiles out of 13,335 total profiles. The later
+processed files inspected for this repository contain 3,109 eddy labels, so
+these figures are data-version-specific and are not assumed to be identical to
+the published archive split. Limited eddy sampling can bias a conventional
+model toward more common non-eddy conditions. The broader methodological issue
+is reviewed by [He and Garcia (2009)](https://doi.org/10.1109/TKDE.2008.239);
+the project-specific reconciliation is recorded in the [data card](docs/DATA_CARD.md).
 
 ### Why use CCM rather than one regressor?
 
 A single regressor trained on all profiles can be dominated by the more common
-non-eddy conditions. To mitigate this sampling imbalance without discarding
-the available observations, CCM uses the full dataset while allowing the eddy
-and non-eddy modules to be treated separately. Its decision module routes a
-sample to the corresponding eddy or non-eddy module; the two modules have the
+non-eddy conditions. CCM was designed to **address the potential effect of
+sampling imbalance** without discarding observations: it uses the full dataset
+while allowing eddy and non-eddy modules to be treated separately. Its decision
+module routes a sample to the corresponding module; the two modules have the
 same architecture and separate weights.
 
 ![CCM and non-CCM performance comparison](docs/figures/ccm_vs_nonccm_major1.png)
 
-*Figure. Performance comparison used in the Major 1 reviewer response. Red
-circles are CCM and blue squares are non-CCM; solid and dashed lines indicate
-the independent test and test datasets, respectively. Panels show
-depth-dependent temperature and salinity RMSE and NRMSE. The comparison is the
-ablation evidence for using separate eddy and non-eddy modules; model selection
-prioritized robust performance and a small difference between test and
-independent-test errors.*
+*Figure A. Author-generated CCM/non-CCM comparison prepared for the Major 1
+reviewer response; it is not a figure in Kim et al. (2026). Red circles are
+CCM and blue squares are non-CCM; solid and dashed lines indicate the historical
+external-validation and held-out test datasets, respectively. Panels show
+depth-dependent temperature and salinity RMSE and NRMSE. This historical
+comparison is consistent with CCM showing more robust external-validation
+behavior in that analysis, but it does not by itself prove that sampling
+imbalance was fully mitigated. The non-CCM training workflow, baseline weights,
+and regime-stratified metrics are not released here.*
 
 The architecture is an ocean-reconstruction application of input-dependent
 conditional computation: a gating decision selects the computation used for a
@@ -97,9 +109,8 @@ they are not all claims that CCM reproduces the cited methods exactly.
 
 
 > **Start here:** this workflow is written for a first-time user. It uses the
-> published `v0.1.0` Release and the current `main` branch, without
-> undocumented local paths. The Release is access-controlled while this
-> repository is private: sign in to GitHub with repository read access first.
+> `v0.1.1` source release with the published `v0.1.0` archive assets, without
+> undocumented local paths. The repository and Release assets are public.
 
 ## What you can reproduce
 
@@ -107,7 +118,7 @@ they are not all claims that CCM reproduces the cited methods exactly.
 |---|---|---|
 | Evaluate the released checkpoint | execution package + archive `testset.mat` | depth-resolved temperature/salinity metrics on the archived held-out split |
 | Retrain one archived split | archive `trainset.mat` + `testset.mat` | `best.pth`, `last.pth`, normalization statistics, and validation loss |
-| Repeat the original 20-attempt sweep | same archive plus your own automation | not automated by `train.py`; the archive preserves 500 historical checkpoints |
+| Repeat the original 20-attempt sweep | same archive plus your own automation | not fully reproducible: original seeds and selection record are not recovered |
 | Independent external validation | your own 14-channel MATLAB dataset | optional; not included in Release v0.1.0 |
 
 The supplied `testset.mat` is a held-out split from the archived workflow. It
@@ -115,11 +126,11 @@ is **not** an independent external validation dataset.
 
 ## Release assets
 
-Download both assets from [Release v0.1.0](https://github.com/kdy8706/Conditional-Computation-Model/releases/tag/v0.1.0).
+Use the source from [Release v0.1.1](https://github.com/kdy8706/Conditional-Computation-Model/releases/tag/v0.1.1) or its matching commit, then download the two data/model assets from [Release v0.1.0](https://github.com/kdy8706/Conditional-Computation-Model/releases/tag/v0.1.0).
 
 | Asset | Size | Purpose |
 |---|---:|---|
-| [`ccm-take5-epoch996-v0.1.0.zip`](https://github.com/kdy8706/Conditional-Computation-Model/releases/download/v0.1.0/ccm-take5-epoch996-v0.1.0.zip) | ~2 MB | User-designated checkpoint, four matching normalization files, configuration, and checksums |
+| [`ccm-take5-epoch996-v0.1.1.zip`](https://github.com/kdy8706/Conditional-Computation-Model/releases/download/v0.1.1/ccm-take5-epoch996-v0.1.1.zip) | ~2 MB | User-designated checkpoint, four matching normalization files, configuration, and checksums |
 | [`last_result.1.zip`](https://github.com/kdy8706/Conditional-Computation-Model/releases/download/v0.1.0/last_result.1.zip) | ~1.06 GB | Full archived attempt: source `cnn.py`, 500 checkpoints, train/test splits, normalization files, and historical results |
 
 `last_result.1.zip` is the published filename of the locally named
@@ -136,12 +147,14 @@ SHA-256 (model_epoch_996.pth)
 
 ## 1. Install
 
-Clone the current `main` branch. Do not use the automatically generated source
-ZIP attached to the older `v0.1.0` tag: the current branch includes support for
+Clone tag `v0.1.1` for a version-pinned workflow. Do not use the automatically
+generated source ZIP attached to the older `v0.1.0` tag: it lacks support for
 the archived `trainset.mat` and `testset.mat` layout.
 
 ```powershell
-git clone https://github.com/kdy8706/Conditional-Computation-Model.git
+python --version
+# If this does not report Python 3.10 or newer, install CPython from https://www.python.org/downloads/
+git clone --branch v0.1.1 https://github.com/kdy8706/Conditional-Computation-Model.git
 cd Conditional-Computation-Model
 
 python -m venv .venv
@@ -150,6 +163,9 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 python -m pytest -q
 ```
+
+If PowerShell execution policy blocks activation, run the same commands with
+`.\.venv\Scripts\python.exe` instead of `python`; activation is optional.
 
 Requirements are Python 3.10 or newer plus the packages declared in
 `pyproject.toml`: NumPy, SciPy, PyTorch, torch-optimizer, PyYAML, and pytest
@@ -167,7 +183,7 @@ exactly:
 Conditional-Computation-Model/
 ├─ artifacts/
 │  └─ release/
-│     ├─ execution/                         # extract ccm-take5-epoch996-v0.1.0.zip here
+│     ├─ execution/                         # extract ccm-take5-epoch996-v0.1.1.zip here
 │     │  ├─ model_epoch_996.pth
 │     │  ├─ input_normalization.mat
 │     │  ├─ output_normalization_t.mat
@@ -179,7 +195,7 @@ Conditional-Computation-Model/
 │           ├─ trainset.mat
 │           ├─ testset.mat
 │           ├─ model_result.mat
-│           └─ model_epoch_10.pth ... model_epoch_998.pth
+│           └─ model_epoch_2.pth ... model_epoch_1000.pth
 ├─ configs/release_archive_take5.yaml
 └─ scripts/
 ```
@@ -213,7 +229,7 @@ python scripts/evaluate.py `
   --normalization artifacts/release/take5_epoch996.npz `
   --feature-layout take5_10spatial `
   --pool-mode avg `
-  --vector-grid-index 0 0 `
+  --vector-grid-index 3 3 `
   --missing-value-policy sentinel `
   --output outputs/release_test_metrics.json
 ```
@@ -239,15 +255,14 @@ Outputs are written to `runs/release_archive_take5/`:
 best.pth                 lowest validation loss from this run
 last.pth                 checkpoint from epoch 1,000
 stats.npz                training-split normalization statistics
-split_indices.npz        archived train/test index ranges
+split_indices.npz        indices produced within this new configured run
 resolved_config.yaml     exact configuration used
 ```
 
 The historical archive used 20 attempts and retained 500 intermediate
 checkpoints (every two epochs). The refactored trainer intentionally runs one
-configured attempt. To repeat a 20-attempt sweep, run this command in separate
-output directories with explicitly recorded seeds and compare held-out metrics
-before selecting a checkpoint.
+configured attempt. Original 20-attempt seeds and the full selection record are
+not recovered, so this repository does not claim to reproduce that sweep.
 
 ## Data interface and compatibility
 
@@ -255,7 +270,8 @@ The released workflow uses `take5_10spatial`:
 
 - `Dinput2` or the archived split input: `(8, 8, 14, N)`;
 - 10 spatial fields, including net heat flux;
-- SST, SSS, and day of year as three point inputs;
+- SST, SSS, and day of year as three point inputs, taken at the central
+  `(4, 4)` location in one-based notation (`[3, 3]` in this Python code);
 - the 14th channel as the binary eddy-routing signal;
 - targets: `(N, 13, 2)` for temperature and salinity; and
 - pressure: `(14, N)`.
@@ -269,9 +285,10 @@ conditioning.
 This division expresses two parts of the physical problem: the CNN retains
 horizontal surface structure, while the MLP incorporates the local 0 m
 in-situ SST and SSS used as surface thermohaline conditions. The residual
-depth-to-depth connection lets a deeper prediction use the preceding water
-layer, which was designed to help learn vertical temperature and salinity
-transport and leaves a clear location for a future mathematical formulation.
+depth-to-depth connection conditions a deeper prediction on the preceding water
+layer. It remains in the architecture as the planned insertion point for a
+future equation-informed hybrid layer; it is not direct evidence that the
+current model learns physical transport.
 
 The input choices and sequential structure were informed by the
 [temperature-conservation note](docs/references/ocean_3D_temperature_conservation_equation.txt)
@@ -295,6 +312,8 @@ results as independent evaluation and record the dataset provenance.
 - [Reproducibility guide](docs/REPRODUCIBILITY.md)
 - [Data card](docs/DATA_CARD.md)
 - [Model-selection policy](docs/MODEL_SELECTION.md)
+- [Evidence status and known limitations](docs/EVIDENCE_STATUS.md)
+- [Tested environment](docs/TESTED_ENVIRONMENT.md)
 - [Reference output for the released test split](results/release_test_metrics.json)
 - [Physical motivation and references](docs/references/README.md)
 - `configs/`: training profiles
@@ -308,8 +327,8 @@ The provisional software author and maintainer is Dong-Young Kim. See
 [`CITATION.cff`](CITATION.cff) for citation details; contact
 [kdy8706@naver.com](mailto:kdy8706@naver.com) for questions.
 
-The Release includes the author-authorized archive and weights. No software
-license has yet been selected, so publication does not by itself grant a broad
-reuse or redistribution license. Add an explicit license before representing
-the repository as openly reusable.
+Source code is distributed under the [BSD 3-Clause License](LICENSE). The
+author-prepared model archive, derived train/test split, and weights are made
+available under the [CC BY 4.0 terms](DATA_AND_MODEL_LICENSE.md). Third-party
+reference papers and any upstream source products retain their own terms.
 

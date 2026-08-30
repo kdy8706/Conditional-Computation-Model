@@ -55,6 +55,11 @@ The final evaluator and checkpoint are present, but the exact 9-channel training
 - Most `expand_fc` layers and `residual_fc[0]` are created but never reached in the legacy forward pass.
 - Fixing either issue changes checkpoint behavior and should be a versioned retraining change.
 
-## Release policy
+## Public-release policy
 
-Until the author confirms the target model and dataset identity, describe this as a recovered research-code release. Do not label a newly trained 10-channel checkpoint as the exact epoch-996 model, and do not attribute the 8,091-profile metrics to the paper's 4,100-profile dataset without provenance confirmation.
+This repository is publicly released as a recovered, archive-compatible
+research-code implementation so that other researchers can run and inspect it.
+Do not label the released 10-channel take5 checkpoint as the exact final-paper
+epoch-996 model, and do not attribute the 8,091-profile metrics to the paper's
+4,100-profile dataset without provenance confirmation. The public scope and
+evidence boundary are summarized in [EVIDENCE_STATUS.md](EVIDENCE_STATUS.md).

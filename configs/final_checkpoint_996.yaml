@@ -11,7 +11,7 @@ data:
   training_profiles: 7893
   held_out_profiles: 1973
   independent_profiles_in_final_result: 8091
-  vector_grid_index: [0, 0]
+  vector_grid_index: [3, 3]
   missing_value: -999.0
   missing_value_policy: preserve
 

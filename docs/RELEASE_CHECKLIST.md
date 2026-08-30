@@ -1,38 +1,44 @@
-# Public release checklist
+# Public release record and remaining limitations
 
-## Must resolve
+## Completed for the public workflow
 
-- [x] Identify the checkpoint used by the final recovered CCM result (`model_epoch_996.pth`).
-- [ ] Confirm whether epoch 996, the later 10-channel take5 model, or both should be the public target.
-- [ ] Recover/confirm the exact loss configuration that generated epoch 996.
-- [ ] Reconcile the 3,141 versus 3,109 eddy sample count.
-- [x] Reconstruct the deterministic OW-to-binary routing rule in Python.
-- [x] Recover the CCM/non-CCM evaluator outputs and export their numeric metrics.
-- [ ] Confirm the provenance of the 8,091-profile final independent artifact and its 413-index subset.
-- [ ] Confirm the exact input channel order, units, product names, and versions.
-- [ ] Choose a software license with all code authors.
-- [ ] Confirm data and trained-weight redistribution permissions.
-- [x] Add provisional repository title and maintainer contact.
-- [ ] Confirm software contributors and acknowledgements with the author team.
+- The source is versioned as `v0.1.1`; it supports the archived
+  `trainset.mat`/`testset.mat` variable layout.
+- The author-designated `model_epoch_996.pth`, four normalization files, and
+  the complete archived train/test split are distributed as GitHub Release
+  assets. `scripts/preflight_release.py` checks SHA-256 hashes for all five
+  small execution files and validates both MATLAB files.
+- The public route uses the paper's central point, `(4, 4)` in one-based
+  notation and `[3, 3]` in Python.
+- The public route has passed the test suite and checkpoint evaluation on the
+  archived held-out split in the documented Windows/CPython environment.
+- Code is licensed under BSD 3-Clause; author-prepared derived data, weights,
+  and figures use the repository's CC BY 4.0 terms.
 
-## Strongly recommended
+## Explicit limitations (do not overstate)
 
-- [ ] Export an immutable train/validation split manifest with a seed.
-- [ ] Save one selected checkpoint plus optimizer/configuration metadata.
-- [ ] Generate a small synthetic example that can run without restricted data.
-- [ ] Add dataset and checkpoint SHA-256 checksums.
-- [ ] Run training and inference tests in a clean environment with CUDA and CPU.
-- [ ] Add a non-CCM baseline implementation and reproducible ablation command.
-- [ ] Decide whether to preserve legacy masking or retrain with corrected masking.
-- [ ] Remove unreachable layers in a versioned, checkpoint-incompatible model revision.
-- [ ] Add continuous integration after the dependency versions are confirmed.
+- This is an archive-compatible runnable implementation for reuse, **not a
+  claim that its take5 checkpoint is the exact final production artifact for
+  every result in Kim et al. (2026)**.
+- The original 20-attempt sweep, its seeds, and its complete model-selection
+  record have not been recovered. The documented trainer executes one
+  configured attempt.
+- Eddy totals of 3,141 (review response) and 3,109 (inspected processed
+  files) refer to different known data versions. A count for the published
+  archived split has not yet been assigned.
+- The final 8,091-profile independent artifact and its relationship to the
+  archived held-out split require additional provenance confirmation.
+- Figure A is an author-generated reviewer-response illustration, not a
+  figure in Kim et al. (2026). Its non-CCM comparator is not released as a
+  runnable baseline.
+- Upstream product names, versions, and redistribution terms remain the
+  responsibility of every downstream user. Repository terms do not supersede
+  source-provider requirements.
 
-## Files that must stay out of ordinary Git history
+## Recommended future additions
 
-- 87,021 legacy `.pth` files under `process`;
-- raw and processed observation `.mat` files;
-- the 1.28 GB `all.mat` and multi-hundred-MB matching files;
-- bulk predictions and generated 3D fields;
-- temporary code screenshots and repeated experiment folders.
-
-Use an external data archive, institutional repository, or an appropriately configured Git LFS/Release workflow only after licensing and quota review. Keep the source repository small and reproducible.
+- release a documented non-CCM baseline and its inputs for a reproducible
+  imbalance analysis;
+- publish an immutable split/regime-count manifest with data-version IDs;
+- record full optimizer, seed, and selection metadata for future experiments;
+- add a small synthetic fixture and continuous integration for quick checks.

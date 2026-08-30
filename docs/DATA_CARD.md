@@ -6,10 +6,10 @@
 |---|---|---:|---|
 | archived retraining split | `last_result.1.zip/13/trainset.mat` | 10,668 | published in GitHub Release v0.1.0 |
 | archived held-out split | `last_result.1.zip/13/testset.mat` | 2,667 | published in GitHub Release v0.1.0 |
-| primary training/validation | `take5/process/dataset3.mat` | 9,866 | excluded pending redistribution review |
-| KMA supplement for training/validation | `validation/kma(1)/data/dataset_ARGO(1).mat` | 3,469 | excluded pending redistribution review |
-| KIOST independent test | `validation/kordi(1)/data/dataset_ARGO(1).mat` | 4,100 | excluded pending redistribution review |
-| final-result independent artifact | final results `dataset_ARGO(1).mat` | 8,091 | excluded; identity requires author confirmation |
+| primary training/validation | `take5/process/dataset3.mat` | 9,866 | source file not separately released; archive relationship incomplete |
+| KMA supplement for training/validation | `validation/kma(1)/data/dataset_ARGO(1).mat` | 3,469 | source file not separately released; archive relationship incomplete |
+| KIOST independent test | `validation/kordi(1)/data/dataset_ARGO(1).mat` | 4,100 | not included in the public Release |
+| final-result independent artifact | final results `dataset_ARGO(1).mat` | 8,091 | not included; identity requires author confirmation |
 
 The primary and KMA datasets combine to 13,335 samples, matching the article's training/validation count. The v0.1.0 Release publishes the author-authorized archived 10,668/2,667 train/test split used by the first-time-user workflow. This held-out split is not the 4,100-profile KIOST independent test set.
 
@@ -52,9 +52,13 @@ The 14-channel order below is confirmed by `ch4_nan_processing.mlx` and the late
 
 The separate historical 13-channel compatibility layout omits net heat flux;
 later channels shift left by one and the decision channel is 13. It must not be
-used with the v0.1.0 14-channel take5 checkpoint.
+used with the public 14-channel take5 checkpoint.
 
-The article describes vector values at the central `(4, 4)` point in one-based indexing. The recovered final evaluator and take5 code use `[0, 0]`; this is the compatibility default. The `[0, 0]` and `[3, 3]` SST/SSS values differ in the final 8,091-profile artifact, so future data pipelines must choose the intended location explicitly.
+The public workflow follows the article's central `(4, 4)` point in one-based
+indexing, represented as `[3, 3]` in Python. Earlier recovered scripts used
+`[0, 0]`; that historical behavior is not the public default because the
+`[0, 0]` and `[3, 3]` SST/SSS values differ in the final 8,091-profile
+artifact.
 
 ## Output levels
 
@@ -74,7 +78,10 @@ Remaining NaNs are converted to the sentinel `-999` after standardization. Outpu
 
 ## Eddy counts requiring reconciliation
 
-The reviewer response reports 3,141 eddy profiles among 13,335 samples. The currently inspected binary channel contains 3,109 eddy profiles: 2,148 in the primary file and 961 in the KMA file. Before release, identify whether the publication used a later data version, a different OW threshold product, or an additional filtering rule.
+The reviewer response reports 3,141 eddy profiles among 13,335 samples. The
+currently inspected later binary channel contains 3,109 eddy profiles: 2,148
+in the primary file and 961 in the KMA file. Both counts are retained as
+data-version-specific records; they must not be presented as interchangeable.
 
 The source-to-archive mapping and eddy count for the published 10,668/2,667
 split should be retained with any future data-version release.
@@ -90,7 +97,8 @@ For any future release or redistribution, document:
 - checksums for the exact files used in the publication;
 - the mapping from source observations to processed samples.
 
-The v0.1.0 Release publishes the author-authorized archived split and weights;
-it does not establish an open data license or identify every upstream provider.
-A small synthetic fixture remains useful for lightweight tests.
+The public Release publishes the author-authorized archived split and weights
+under the repository's [data and model terms](../DATA_AND_MODEL_LICENSE.md).
+Those terms do not replace any upstream-provider requirements. A small
+synthetic fixture remains useful for lightweight tests.
 
