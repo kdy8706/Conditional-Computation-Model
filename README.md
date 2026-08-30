@@ -18,12 +18,12 @@ Two internally consistent versions were found and are kept separate in code:
 
 | Layout | Raw shape | Spatial channels | Point channels | Routing | Evidence |
 |---|---|---:|---:|---:|---|
-| `final_checkpoint_9spatial` | `(8, 8, 13, N)` | 9 | 3 | 1 | `model_epoch_996.pth` and its final evaluator |
+| `final_checkpoint_9spatial` | `(8, 8, 13, N)` | 9 | 3 | 1 | separate final evaluator (not `last_result(1).zip`) |
 | `take5_10spatial` | `(8, 8, 14, N)` | 10 | 3 | 1 | later `take5/cnn.py` and `dataset3.mat` |
 
-The selected final checkpoint uses SSH, wind u/v, tidal elevation/current u/v, longitude, latitude, and bathymetry as its nine spatial channels. SST, SSS, and day of year are point inputs. The final routing channel is the binary eddy flag. The later take5 version inserts net heat flux before longitude, producing ten spatial channels.
+The separate final-checkpoint version uses SSH, wind u/v, tidal elevation/current u/v, longitude, latitude, and bathymetry as its nine spatial channels. SST, SSS, and day of year are point inputs. The final routing channel is the binary eddy flag. The take5 version inserts net heat flux before longitude, producing ten spatial channels.
 
-This distinction is material: the epoch-996 checkpoint's first gated-convolution weights have shape `(20, 9, 3, 3)`. See [publication-to-code alignment](docs/PAPER_ALIGNMENT.md).
+The user-designated ZIP candidate is `last_result(1).zip/13/model_epoch_996.pth`. Its first gated-convolution weights have shape `(20, 10, 3, 3)`, so it is a take5 checkpoint and must be evaluated with 10 spatial channels and average pooling. See [publication-to-code alignment](docs/PAPER_ALIGNMENT.md).
 
 ## Model I/O and architecture
 
@@ -67,26 +67,26 @@ The codebase exposes a reproducible training and evaluation path: model-ready MA
 
 Start from [the reproduction guide](docs/REPRODUCIBILITY.md) and [the archive candidate configuration](configs/archive_take5_epoch996_candidate.yaml). The guide explains how to connect authorized training and independent-validation datasets, adjust the number of epochs, batch size, learning rate, seed, and other settings, then evaluate depth-resolved temperature and salinity metrics.
 
-The supplied local archive contains 500 intermediate checkpoints and is approximately 1.14 GB compressed. It is intentionally **not** committed as a repository ZIP. Its user-designated `model_epoch_996.pth` candidate belongs to the take5 10-spatial-channel layout, not the separate 9-spatial epoch-996 artifact documented above. [Model selection policy](docs/MODEL_SELECTION.md) defines the record required before publishing a single selected release package.
+The supplied local archive contains 500 intermediate checkpoints and is approximately 1.14 GB compressed. It is intentionally **not** committed as a repository ZIP. Its verified user-designated candidate is `13/model_epoch_996.pth`: a 10-spatial-channel take5 state dictionary with matching normalization files in the same archive directory. The archive's source code specifies 1,000 epochs, batch size 5,000, learning rate 0.0005, average pooling, and 20 training attempts. [Model selection policy](docs/MODEL_SELECTION.md) defines the record required before publishing a single selected release package.
 
 ## Recovered checkpoint evaluation
 
-Keep authorized local copies outside Git, then convert the legacy normalization files:
+Keep authorized local copies outside Git. Extract the archive's `13/` directory, which contains the candidate checkpoint and its matching normalization files, then run:
 
-```bash
-python scripts/convert_legacy_normalization.py ^
-  --source artifacts/legacy_model_condition ^
-  --output artifacts/normalization/final_epoch996.npz ^
-  --feature-layout final_checkpoint_9spatial
+```powershell
+python scripts/convert_legacy_normalization.py `
+  --source path/to/extracted/13 `
+  --output artifacts/normalization/take5_epoch996.npz `
+  --feature-layout take5_10spatial
 
-python scripts/evaluate.py ^
-  --data data/independent/dataset_ARGO_final.mat ^
-  --checkpoint checkpoints/model_epoch_996.pth ^
-  --normalization artifacts/normalization/final_epoch996.npz ^
-  --feature-layout final_checkpoint_9spatial ^
-  --pool-mode max ^
-  --vector-grid-index 0 0 ^
-  --missing-value-policy preserve ^
+python scripts/evaluate.py `
+  --data path/to/independent_14channel.mat `
+  --checkpoint path/to/extracted/13/model_epoch_996.pth `
+  --normalization artifacts/normalization/take5_epoch996.npz `
+  --feature-layout take5_10spatial `
+  --pool-mode avg `
+  --vector-grid-index 0 0 `
+  --missing-value-policy preserve `
   --output outputs/metrics.json
 ```
 
@@ -108,7 +108,7 @@ The recovered CCM/non-CCM depth curves are provided as [a compact CSV](results/d
 python scripts/train.py --config configs/paper_reported.yaml
 ```
 
-The default research configuration uses the later 14-channel take5 layout, average pooling, sentinel missing-value handling, and the focal-Huber gamma values found in `take5/cnn.py`: 1.5 for non-eddy and 2.0 for eddy. It is not claimed to recreate the 9-channel epoch-996 checkpoint, whose exact training script has not been recovered.
+The default research configuration follows the verified ZIP archive: 14-channel take5 layout, `dataset3.mat` plus the 14-channel `dataset_ARGO(1).mat` supplement, 1,000 epochs, average pooling, sentinel missing-value handling, and focal-Huber gamma values of 1.5 (non-eddy) and 2.0 (eddy). The refactored trainer runs one configured attempt; the original archive's 20-attempt sweep remains documented rather than silently implied.
 
 ## What is included
 
