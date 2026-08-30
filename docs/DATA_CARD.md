@@ -4,12 +4,14 @@
 
 | Role | Identified source | Samples | Repository policy |
 |---|---|---:|---|
+| archived retraining split | `last_result.1.zip/13/trainset.mat` | 10,668 | published in GitHub Release v0.1.0 |
+| archived held-out split | `last_result.1.zip/13/testset.mat` | 2,667 | published in GitHub Release v0.1.0 |
 | primary training/validation | `take5/process/dataset3.mat` | 9,866 | excluded pending redistribution review |
 | KMA supplement for training/validation | `validation/kma(1)/data/dataset_ARGO(1).mat` | 3,469 | excluded pending redistribution review |
 | KIOST independent test | `validation/kordi(1)/data/dataset_ARGO(1).mat` | 4,100 | excluded pending redistribution review |
 | final-result independent artifact | final results `dataset_ARGO(1).mat` | 8,091 | excluded; identity requires author confirmation |
 
-The primary and KMA datasets combine to 13,335 samples, matching the article's training/validation count. The published workflow uses an 80/20 shuffled split and keeps the 4,100 KIOST profiles as the independent test set.
+The primary and KMA datasets combine to 13,335 samples, matching the article's training/validation count. The v0.1.0 Release publishes the author-authorized archived 10,668/2,667 train/test split used by the first-time-user workflow. This held-out split is not the 4,100-profile KIOST independent test set.
 
 ## MATLAB variables
 
@@ -19,7 +21,11 @@ The later take5 files contain:
 - `Doutput2`: `(N, 13, 2)`
 - `Dpressure2`: `(14, N)`
 
-The recovered epoch-996 train/test files and final 8,091-profile evaluation file instead contain `Dinput2` with 13 channels. Their other shapes are unchanged.
+The published archive split uses legacy variable names: `xtrain`, `ytrain`, and
+`pressure_train` in `trainset.mat`, and `xtest`, `ytest`, and `pressure_test`
+in `testset.mat`. Its input shape is `(8, 8, 14, N)` and it is directly
+supported by the current loader. The separate historical 13-channel final
+evaluation artifact is not part of the v0.1.0 first-time workflow.
 
 The first 13 input channels are standardized using statistics calculated on the training split. The binary routing channel is not standardized. Temperature and salinity outputs are standardized independently at every output level. Pressure is standardized using one global mean and standard deviation.
 
@@ -44,7 +50,9 @@ The 14-channel order below is confirmed by `ch4_nan_processing.mlx` and the late
 | 13 | day of year | vector |
 | 14 | binary eddy flag derived from OW | decision |
 
-For the 13-channel epoch-996 layout, channel 7 (net heat flux) is absent and later channels shift left by one. Recovered normalization means identify channels 7-9 as longitude (about 130), latitude (about 37), and bathymetry (about -1,358 m), respectively. The decision channel is 13.
+The separate historical 13-channel compatibility layout omits net heat flux;
+later channels shift left by one and the decision channel is 13. It must not be
+used with the v0.1.0 14-channel take5 checkpoint.
 
 The article describes vector values at the central `(4, 4)` point in one-based indexing. The recovered final evaluator and take5 code use `[0, 0]`; this is the compatibility default. The `[0, 0]` and `[3, 3]` SST/SSS values differ in the final 8,091-profile artifact, so future data pipelines must choose the intended location explicitly.
 
@@ -68,11 +76,12 @@ Remaining NaNs are converted to the sentinel `-999` after standardization. Outpu
 
 The reviewer response reports 3,141 eddy profiles among 13,335 samples. The currently inspected binary channel contains 3,109 eddy profiles: 2,148 in the primary file and 961 in the KMA file. Before release, identify whether the publication used a later data version, a different OW threshold product, or an additional filtering rule.
 
-The epoch-996 artifacts use only the 9,866-profile primary set and contain the same 2,148 eddy samples, split as 1,712 train and 436 held out.
+The source-to-archive mapping and eddy count for the published 10,668/2,667
+split should be retained with any future data-version release.
 
 ## Redistribution requirements
 
-Before publishing any data or normalization artifacts, document:
+For any future release or redistribution, document:
 
 - data provider and product identifiers for every input variable;
 - original licenses and citation requirements;
@@ -81,4 +90,7 @@ Before publishing any data or normalization artifacts, document:
 - checksums for the exact files used in the publication;
 - the mapping from source observations to processed samples.
 
-A small synthetic fixture should be released with the code even if the research datasets cannot be redistributed.
+The v0.1.0 Release publishes the author-authorized archived split and weights;
+it does not establish an open data license or identify every upstream provider.
+A small synthetic fixture remains useful for lightweight tests.
+
