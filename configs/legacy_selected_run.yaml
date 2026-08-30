@@ -4,7 +4,7 @@ seed: 20250217
 data:
   feature_layout: take5_10spatial
   primary_mat: data/raw/dataset3.mat
-  supplement_mat: data/raw/dataset_ARGO_kma.mat
+  supplement_mat: data/raw/dataset_ARGO(1).mat
   train_fraction: 0.8
   vector_grid_index: [0, 0]
   missing_value: -999.0
@@ -24,3 +24,4 @@ training:
   checkpoint_policy: best_and_last
   monitor: validation_total_loss
   output_dir: runs/legacy_selected_run
+
