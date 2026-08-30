@@ -6,7 +6,7 @@ The local `last_result(1).zip` archive contains 500 saved checkpoints for the ta
 
 ## Candidate designation
 
-The archive's `13/model_epoch_996.pth` is the user-designated candidate checkpoint. It is a 542-tensor `OrderedDict`; its first normal and eddy expert convolution weights are both `(20, 10, 3, 3)`. This verifies the **take5 10-spatial-channel layout**, which includes net heat flux. It is distinct from the repository's previously documented `final_checkpoint_9spatial` epoch-996 artifact.
+The archive's `13/model_epoch_996.pth` is the user-designated candidate checkpoint. It is a 542-tensor `OrderedDict`; its first normal and eddy expert convolution weights are both `(20, 10, 3, 3)`. This verifies the **take5 10-spatial-channel layout**, which includes net heat flux. Its verified SHA-256 is `79b6a661d77eca4fb8ca8c7d978a530e54234e8ea77a8b0941c09e1887766e02`. It is distinct from the repository's previously documented `final_checkpoint_9spatial` epoch-996 artifact.
 
 ## Required selection record before release
 
