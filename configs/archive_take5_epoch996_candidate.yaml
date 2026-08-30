@@ -1,11 +1,11 @@
 profile: archive_take5_epoch996_candidate
-purpose: reproduce the user-designated archive checkpoint with the take5 layout
+purpose: reproduce the user-designated ZIP-archive checkpoint with the take5 layout
 seed: 20250217
 
 data:
   feature_layout: take5_10spatial
   primary_mat: data/raw/dataset3.mat
-  supplement_mat: data/raw/dataset_ARGO_kma.mat
+  supplement_mat: data/raw/dataset_ARGO(1).mat
   train_fraction: 0.8
   vector_grid_index: [0, 0]
   missing_value: -999.0
@@ -18,7 +18,7 @@ model:
   pool_mode: avg
 
 training:
-  epochs: 1500
+  epochs: 1000
   batch_size: 5000
   learning_rate: 0.0005
   loss_profile: paper_focal
@@ -29,7 +29,10 @@ training:
   output_dir: runs/archive_take5_epoch996_candidate
 
 archive:
-  candidate_checkpoint: model_epoch_996.pth
+  candidate_checkpoint: 13/model_epoch_996.pth
   source_archive: last_result(1).zip
   source_layout: take5_10spatial
-  status: local archive asset pending publication
+  archived_attempts: 20
+  archived_checkpoint_count: 500
+  archived_checkpoint_interval_epochs: 2
+  status: verified local archive asset pending publication
