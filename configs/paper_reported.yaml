@@ -1,10 +1,11 @@
-profile: paper_reported
+profile: zip_archive_take5
+purpose: reproduce one ZIP-archive training run with the take5 10-spatial-channel layout
 seed: 20250217
 
 data:
   feature_layout: take5_10spatial
   primary_mat: data/raw/dataset3.mat
-  supplement_mat: data/raw/dataset_ARGO_kma.mat
+  supplement_mat: data/raw/dataset_ARGO(1).mat
   train_fraction: 0.8
   vector_grid_index: [0, 0]
   missing_value: -999.0
@@ -17,7 +18,7 @@ model:
   pool_mode: avg
 
 training:
-  epochs: 1500
+  epochs: 1000
   batch_size: 5000
   learning_rate: 0.0005
   loss_profile: paper_focal
@@ -25,4 +26,4 @@ training:
   eddy_gamma: 2.0
   checkpoint_policy: best_and_last
   monitor: validation_total_loss
-  output_dir: runs/paper_reported
+  output_dir: runs/zip_archive_take5
