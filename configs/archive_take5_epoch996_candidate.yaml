@@ -1,0 +1,35 @@
+profile: archive_take5_epoch996_candidate
+purpose: reproduce the user-designated archive checkpoint with the take5 layout
+seed: 20250217
+
+data:
+  feature_layout: take5_10spatial
+  primary_mat: data/raw/dataset3.mat
+  supplement_mat: data/raw/dataset_ARGO_kma.mat
+  train_fraction: 0.8
+  vector_grid_index: [0, 0]
+  missing_value: -999.0
+  missing_value_policy: sentinel
+
+model:
+  num_depths: 13
+  dropout: 0.2
+  mask_mode: legacy
+  pool_mode: avg
+
+training:
+  epochs: 1500
+  batch_size: 5000
+  learning_rate: 0.0005
+  loss_profile: paper_focal
+  non_eddy_gamma: 1.5
+  eddy_gamma: 2.0
+  checkpoint_policy: best_and_last
+  monitor: validation_total_loss
+  output_dir: runs/archive_take5_epoch996_candidate
+
+archive:
+  candidate_checkpoint: model_epoch_996.pth
+  source_archive: last_result(1).zip
+  source_layout: take5_10spatial
+  status: local archive asset pending publication
