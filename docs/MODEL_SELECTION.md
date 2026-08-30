@@ -2,11 +2,11 @@
 
 ## Scope
 
-The local `last_result(1).zip` archive contains 500 saved checkpoints for the take5 layout, from `model_epoch_10.pth` through `model_epoch_998.pth`, plus normalization files and `model_result.mat`. It is approximately 1.14 GB compressed and is not a suitable Git repository asset.
+The local `last_result(1).zip` archive contains 500 saved checkpoints for the take5 layout, from `model_epoch_10.pth` through `model_epoch_998.pth`, plus the root `cnn.py`, matching normalization files, train/test splits, and `model_result.mat`. It is approximately 1.14 GB compressed and is not a suitable Git repository asset.
 
 ## Candidate designation
 
-The archive's `model_epoch_996.pth` is the user-designated candidate checkpoint. It uses the **take5 10-spatial-channel layout**, which includes net heat flux. It is distinct from the repository's previously documented `final_checkpoint_9spatial` epoch-996 artifact.
+The archive's `13/model_epoch_996.pth` is the user-designated candidate checkpoint. It is a 542-tensor `OrderedDict`; its first normal and eddy expert convolution weights are both `(20, 10, 3, 3)`. This verifies the **take5 10-spatial-channel layout**, which includes net heat flux. It is distinct from the repository's previously documented `final_checkpoint_9spatial` epoch-996 artifact.
 
 ## Required selection record before release
 
