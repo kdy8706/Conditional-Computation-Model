@@ -4,8 +4,8 @@ seed: 20250217
 
 data:
   feature_layout: take5_10spatial
-  train_mat: path/to/extracted/13/trainset.mat
-  validation_mat: path/to/extracted/13/testset.mat
+  train_mat: artifacts/release/archive/13/trainset.mat
+  validation_mat: artifacts/release/archive/13/testset.mat
   vector_grid_index: [0, 0]
   missing_value: -999.0
   missing_value_policy: sentinel
